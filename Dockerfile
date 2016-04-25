@@ -18,9 +18,10 @@ RUN apk --update add \
 COPY ./config /config/
 
 # runtime environment variables
-ENV DNS_RESOLVES=consul \
-    DNS_PORT=8600
+ENV JOIN_CLUSTER_ADDRESS=""
 
 EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 8600 8600/udp
 
-ENTRYPOINT ["/opt/consul/consul", "agent", "-server", "-config-dir=/config"]
+COPY ./docker-entrypoint.sh /
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
