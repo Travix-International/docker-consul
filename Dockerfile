@@ -18,3 +18,13 @@ RUN apk --update add \
 COPY ./config /config/
 
 EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 8600 8600/udp
+
+# runtime environment variables
+ENV BOOTSTRAP_EXPECT="1" \
+    JOIN_CLUSTER_ADDRESS=""
+
+CMD if [ "${JOIN_CLUSTER_ADDRESS}" == "" ]; then \
+      /opt/consul/consul agent -server -config-dir=/config -bootstrap-expect=${BOOTSTRAP_EXPECT}; \
+    else \
+      /opt/consul/consul agent -server -config-dir=/config -bootstrap-expect=${BOOTSTRAP_EXPECT} -join=${JOIN_CLUSTER_ADDRESS}; \
+    fi
