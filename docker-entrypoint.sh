@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-/opt/consul/consul agent -server -config-dir=/config
+/opt/consul/consul agent -server -config-dir=/config -bootstrap-expect ${BOOTSTRAP_EXPECT}
 
 if [ "${JOIN_CLUSTER_ADDRESS}" != "" ]
 then
