@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 /opt/consul/consul agent -server -config-dir=/config -bootstrap-expect ${BOOTSTRAP_EXPECT}
