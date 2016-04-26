@@ -20,11 +20,15 @@ COPY ./config /config/
 EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 8600 8600/udp
 
 # runtime environment variables
-ENV BOOTSTRAP_EXPECT="1" \
+ENV DATA_CENTER_NAME="dc1" \
+    BOOTSTRAP_EXPECT="" \
     JOIN_CLUSTER_ADDRESS=""
 
-CMD if [ "${JOIN_CLUSTER_ADDRESS}" == "" ]; then \
-      /opt/consul/consul agent -server -config-dir=/config -bootstrap-expect=${BOOTSTRAP_EXPECT}; \
-    else \
-      /opt/consul/consul agent -server -config-dir=/config -bootstrap-expect=${BOOTSTRAP_EXPECT} -join=${JOIN_CLUSTER_ADDRESS}; \
-    fi
+CMD consulParameters="agent -server -config-dir=/config -dc=${DATA_CENTER_NAME}"; \
+    if [ "${BOOTSTRAP_EXPECT}" != "" ]; then \
+      consulParameters+=" -bootstrap-expect=${BOOTSTRAP_EXPECT}"; \
+    fi; \
+    if [ "${JOIN_CLUSTER_ADDRESS}" != "" ]; then \
+      consulParameters+=" -retry-join=${JOIN_CLUSTER_ADDRESS}"; \
+    fi; \
+    /opt/consul/consul $consulParameters
