@@ -22,13 +22,22 @@ EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 8600 8600/udp
 # runtime environment variables
 ENV DATA_CENTER_NAME="dc1" \
     BOOTSTRAP_EXPECT="" \
-    JOIN_CLUSTER_ADDRESS=""
+    JOIN_CLUSTER_ADDRESS="" \
+    ATLAS_NAME="" \
+    ATLAS_TOKEN=""
 
 CMD consulParameters="agent -server -config-dir=/config -dc=${DATA_CENTER_NAME}"; \
     if [ "${BOOTSTRAP_EXPECT}" != "" ]; then \
-      consulParameters+=" -bootstrap-expect=${BOOTSTRAP_EXPECT}"; \
+      consulParameters="${consulParameters} -bootstrap-expect=${BOOTSTRAP_EXPECT}"; \
     fi; \
     if [ "${JOIN_CLUSTER_ADDRESS}" != "" ]; then \
-      consulParameters+=" -retry-join=${JOIN_CLUSTER_ADDRESS}"; \
+      consulParameters="${consulParameters} -retry-join=${JOIN_CLUSTER_ADDRESS}"; \
     fi; \
+    if [ "${ATLAS_NAME}" != "" ]; then \
+      consulParameters="${consulParameters} -atlas=${ATLAS_NAME}"; \
+      if [ "${ATLAS_TOKEN}" != "" ]; then \
+        consulParameters="${consulParameters} -atlas-token=${ATLAS_TOKEN} -atlas-join"; \
+      fi; \
+    fi; \
+    echo "Starting /opt/consul/consul $consulParameters"; \
     /opt/consul/consul $consulParameters
