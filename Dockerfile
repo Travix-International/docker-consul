@@ -23,10 +23,13 @@ EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 8600 8600/udp
 ENV DATA_CENTER_NAME="dc1" \
     BOOTSTRAP_EXPECT="" \
     JOIN_CLUSTER_ADDRESS="" \
+    CONSUL_LOCAL_CONFIG='{"ui":true,"dns_config":{"allow_stale": false}}' \
+    CONSUL_PARAMS="-server" \
     ATLAS_NAME="" \
-    ATLAS_TOKEN=""
+    ATLAS_TOKEN="" 
 
-CMD consulParameters="agent -server -config-dir=/config -dc=${DATA_CENTER_NAME}"; \
+CMD echo "${CONSUL_LOCAL_CONFIG}" > /config/local_config.json; \
+    consulParameters="agent ${CONSUL_PARAMS} -config-dir=/config -dc=${DATA_CENTER_NAME}"; \
     if [ "${BOOTSTRAP_EXPECT}" != "" ]; then \
       consulParameters="${consulParameters} -bootstrap-expect=${BOOTSTRAP_EXPECT}"; \
     fi; \
